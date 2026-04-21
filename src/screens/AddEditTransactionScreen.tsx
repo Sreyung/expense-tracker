@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Button, SegmentedButtons, TextInput, useTheme, Snackbar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -105,53 +105,64 @@ export default function AddEditTransactionScreen() {
         )}
       </Appbar.Header>
 
-      <ScrollView contentContainerStyle={styles.form} keyboardShouldPersistTaps="handled">
-        <SegmentedButtons
-          value={type}
-          onValueChange={(v) => { setType(v as TransactionType); setCategoryId(null); }}
-          buttons={[
-            { value: 'expense', label: 'Expense', icon: 'arrow-up-circle' },
-            { value: 'income', label: 'Income', icon: 'arrow-down-circle' },
-          ]}
-          style={styles.typeToggle}
-        />
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView
+            contentContainerStyle={styles.form}
+            keyboardShouldPersistTaps="handled"
+          >
+            <SegmentedButtons
+              value={type}
+              onValueChange={(v) => { setType(v as TransactionType); setCategoryId(null); }}
+              buttons={[
+                { value: 'expense', label: 'Expense', icon: 'arrow-up-circle' },
+                { value: 'income', label: 'Income', icon: 'arrow-down-circle' },
+              ]}
+              style={styles.typeToggle}
+            />
 
-        <AmountInput value={amount} onChange={setAmount} error={errors.amount} />
+            <AmountInput value={amount} onChange={setAmount} error={errors.amount} />
 
-        <DatePickerField value={date} onChange={setDate} />
+            <DatePickerField value={date} onChange={setDate} />
 
-        <CategoryPicker
-          value={categoryId}
-          transactionType={type}
-          onChange={(id) => { setCategoryId(id); setErrors((e) => ({ ...e, category: undefined })); }}
-          error={errors.category}
-        />
+            <CategoryPicker
+              value={categoryId}
+              transactionType={type}
+              onChange={(id) => { setCategoryId(id); setErrors((e) => ({ ...e, category: undefined })); }}
+              error={errors.category}
+            />
 
-        <TextInput
-          label="Description (optional)"
-          value={description}
-          onChangeText={setDescription}
-          mode="outlined"
-          style={styles.field}
-          multiline
-          numberOfLines={2}
-        />
+            <TextInput
+              label="Description (optional)"
+              value={description}
+              onChangeText={setDescription}
+              mode="outlined"
+              style={styles.field}
+              multiline
+              numberOfLines={2}
+            />
 
-        <PeoplePicker selectedIds={peopleIds} onChange={setPeopleIds} />
-      </ScrollView>
+            <PeoplePicker selectedIds={peopleIds} onChange={setPeopleIds} />
+          </ScrollView>
+        </TouchableWithoutFeedback>
 
-      <View style={[styles.footer, { backgroundColor: theme.colors.surface }]}>
-        <Button
-          mode="contained"
-          onPress={handleSave}
-          loading={saving}
-          disabled={saving}
-          buttonColor={accentColor}
-          style={styles.saveBtn}
-        >
-          {isEdit ? 'Update' : 'Save'}
-        </Button>
-      </View>
+        <View style={[styles.footer, { backgroundColor: theme.colors.surface }]}>
+          <Button
+            mode="contained"
+            onPress={handleSave}
+            loading={saving}
+            disabled={saving}
+            buttonColor={accentColor}
+            style={styles.saveBtn}
+          >
+            {isEdit ? 'Update' : 'Save'}
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
 
       <Snackbar visible={!!snack} onDismiss={() => setSnack('')} duration={2000}>
         {snack}
@@ -162,6 +173,7 @@ export default function AddEditTransactionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  flex: { flex: 1 },
   form: { padding: 16, gap: 4 },
   typeToggle: { marginBottom: 8 },
   field: { marginVertical: 8 },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, Keyboard } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 
 interface Props {
@@ -37,6 +37,9 @@ export default function AmountInput({ value, onChange, error }: Props) {
           keyboardType="numeric"
           placeholder="0.00"
           placeholderTextColor={theme.colors.onSurfaceVariant}
+          returnKeyType="done"
+          onSubmitEditing={Keyboard.dismiss}
+          blurOnSubmit
         />
       </View>
       {error ? (
