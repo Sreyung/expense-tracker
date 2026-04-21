@@ -1,3 +1,4 @@
+import { registerRootComponent } from 'expo';
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, useColorScheme } from 'react-native';
 import { PaperProvider, ActivityIndicator, Text } from 'react-native-paper';
@@ -5,16 +6,16 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 
-import { runMigrations } from '@/db/migrations/migrate';
-import { useCategoryStore } from '@/stores/categoryStore';
-import { usePeopleStore } from '@/stores/peopleStore';
-import { useTransactionStore } from '@/stores/transactionStore';
-import { setCategoryMap } from '@/services/pdfParser';
-import { lightTheme, darkTheme } from '@/constants/theme';
-import AppNavigator from '@/navigation/AppNavigator';
-import { currentYearMonth } from '@/utils/dateHelpers';
+import { runMigrations } from './src/db/migrations/migrate';
+import { useCategoryStore } from './src/stores/categoryStore';
+import { usePeopleStore } from './src/stores/peopleStore';
+import { useTransactionStore } from './src/stores/transactionStore';
+import { setCategoryMap } from './src/services/pdfParser';
+import { lightTheme, darkTheme } from './src/constants/theme';
+import AppNavigator from './src/navigation/AppNavigator';
+import { currentYearMonth } from './src/utils/dateHelpers';
 
-export default function App() {
+function App() {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
   const [ready, setReady] = useState(false);
@@ -51,7 +52,7 @@ export default function App() {
     return (
       <PaperProvider theme={theme}>
         <View style={styles.center}>
-          <Text variant="titleMedium">Failed to initialize database</Text>
+          <Text variant="titleMedium">Failed to initialize</Text>
           <Text variant="bodySmall" style={{ marginTop: 8, opacity: 0.6 }}>{error}</Text>
         </View>
       </PaperProvider>
@@ -85,3 +86,5 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
 });
+
+registerRootComponent(App);

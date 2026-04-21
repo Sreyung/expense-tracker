@@ -18,9 +18,9 @@ interface TransactionState {
   bulkInsert: (items: TransactionInput[]) => Promise<void>;
 }
 
-const { year, month } = currentYearMonth();
-
-export const useTransactionStore = create<TransactionState>((set, get) => ({
+export const useTransactionStore = create<TransactionState>((set, get) => {
+  const { year, month } = currentYearMonth();
+  return {
   transactions: [],
   summary: { income: 0, expense: 0, net: 0 },
   selectedYear: year,
@@ -62,4 +62,5 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
     await repo.bulkInsert(items);
     await get().refreshCurrentMonth();
   },
-}));
+  };
+});
